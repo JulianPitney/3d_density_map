@@ -139,7 +139,7 @@ def paint_cropping_overlays(zProj, xProj, colors):
         paint_cropping_text_z(xProj, colors)
 
 
-def crop3D(STACK_FULL_PATH):
+def crop3D(STACK_FULL_PATH, destDir):
 
     global stackDims, xProjDims
 
@@ -207,6 +207,6 @@ def crop3D(STACK_FULL_PATH):
 
     croppedStack = stack[z0:z1, refPt[0][1]:refPt[1][1], refPt[0][0]:refPt[1][0]]
     croppedStackDims = zsu.gen_stack_dims_dict(croppedStack)
-    tifffile.imwrite(STACK_FULL_PATH[:-4] + "_cropped.tif", croppedStack)
+    tifffile.imwrite(destDir, croppedStack)
     zsu.print_scan_dims(croppedStackDims)
     return croppedStack
