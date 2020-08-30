@@ -52,7 +52,7 @@ for excelResPath, stackPath in zip(AIVIA_RESULTS_PATHS, STACK_PATHS):
     cubes = DensityMap3D.load_aivia_excel_results_into_cubes(excelResPath)
     DensityMap3D.map_path_lengths_to_range(cubes)
     stack = tifffile.imread(stackPath)
-    temp = Path(path)
+    temp = Path(stackPath)
     stem = temp.stem
 
     for cube in cubes:
@@ -61,5 +61,5 @@ for excelResPath, stackPath in zip(AIVIA_RESULTS_PATHS, STACK_PATHS):
         cube.original_x_range[0]:cube.original_x_range[1]] = cube.totalPathLength
 
     max = zsu.max_project(stack)
-    cv2.imwrite(config.SCANS_DIR + "\\" + stem + '_densityMap.png', max)
+    cv2.imwrite(config.SCANS_DIR + stem + '_densityMap.png', max)
 

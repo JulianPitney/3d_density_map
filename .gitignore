@@ -1,0 +1,9 @@
+/packages/
+*.tif
+*.tiff
+*.png
+*.jpg
+*jpeg
+*.pyc
+__pycache__
+.idea
