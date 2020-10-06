@@ -1,4 +1,5 @@
-import config
+import zStackUtils as zsu
+import cv2
 import tifffile
 import xlrd
 from os import listdir
@@ -71,7 +72,6 @@ def load_aivia_excel_results_into_cubes(cube_results_dir):
     for file in files:
 
         if ".tif" in file or ".xlsx" not in file:
-            print("Skipping non-excel file")
             continue
 
         try:
@@ -123,3 +123,18 @@ def map_path_lengths_to_range(cubes):
 
     return cubes
 
+
+# 1 off
+"""
+resPath = "E:\\pt stroke (july 2020-)\\backup stitched july30\\stitches-fiji restack\\8 bit\\contrast adjusted\\m5_excel\\"
+stackPath = "E:\\pt stroke (july 2020-)\\backup stitched july30\\stitches-fiji restack\\8 bit\\contrast adjusted\\cropped\\m5_cropped.tif"
+cubes = load_aivia_excel_results_into_cubes(resPath)
+map_path_lengths_to_range(cubes)
+stack = tifffile.imread(stackPath)
+for cube in cubes:
+    stack[cube.original_z_range[0]:cube.original_z_range[1],
+    cube.original_y_range[0]:cube.original_y_range[1],
+    cube.original_x_range[0]:cube.original_x_range[1]] = cube.totalPathLength
+max = zsu.max_project(stack)
+cv2.imwrite('densityMap.png', max)
+"""

@@ -7,6 +7,17 @@ import glob
 from pathlib import Path
 import cv2
 
+def crop_scans_dir():
+    print("cropping")
+    STACK_PATHS = glob.glob(config.SCANS_DIR + "*.tif")
+    CROPPED_DIR = Path(config.SCANS_DIR + 'cropped\\')
+    CROPPED_DIR.mkdir(parents=False, exist_ok=False)
+
+    for stackPath in STACK_PATHS:
+        temp = Path(stackPath)
+        stem = temp.stem
+        croppedPath = str(CROPPED_DIR) + "\\" +stem + "_cropped.tif"
+        Crop3D.crop3D(stackPath, croppedPath)
 
 def crop_and_cubify_scans_dir():
 
@@ -59,6 +70,7 @@ def wait_for_aivia():
 def gen_density_maps_from_aivia_results():
 
     STACK_PATHS = glob.glob(config.SCANS_DIR + "*.tif")
+    CROPPED_PATHS = []
     CROPPED_DIR = Path(config.SCANS_DIR + 'cropped\\')
     DENSITY_MAPS_DIR = Path(config.SCANS_DIR + 'density_maps\\')
     AIVIA_RESULTS_PATHS = []
@@ -69,16 +81,19 @@ def gen_density_maps_from_aivia_results():
         stem = temp.stem
         excelPath = Path(config.SCANS_DIR + stem + "_excel\\")
         AIVIA_RESULTS_PATHS.append(str(excelPath) + "\\")
+        CROPPED_PATHS.append(str(CROPPED_DIR) + "\\" +stem + "_cropped.tif")
 
 
-
+    i = 0
 
     # GENERATE DENSITY MAPS
     for excelResPath, stackPath in zip(AIVIA_RESULTS_PATHS, STACK_PATHS):
 
+        print("genning " + str(stackPath))
         cubes = DensityMap3D.load_aivia_excel_results_into_cubes(excelResPath)
         DensityMap3D.map_path_lengths_to_range(cubes)
-        stack = tifffile.imread(stackPath)
+        stack = tifffile.imread(CROPPED_PATHS[i])
+        i+=1
         temp = Path(stackPath)
         stem = temp.stem
 
@@ -88,11 +103,12 @@ def gen_density_maps_from_aivia_results():
             cube.original_x_range[0]:cube.original_x_range[1]] = cube.totalPathLength
 
         max = zsu.max_project(stack)
-        cv2.imwrite(DENSITY_MAPS_DIR + "\\" + stem + '_densityMap.png', max)
+        cv2.imwrite(str(DENSITY_MAPS_DIR) + "\\" + str(stem) + '_densityMap.png', max)
 
 
 
 
+crop_scans_dir()
 #crop_and_cubify_scans_dir()
-gen_density_maps_from_aivia_results()
+#gen_density_maps_from_aivia_results()
 

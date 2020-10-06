@@ -1,16 +1,16 @@
 # DISPLAY CONFIG
-DISPLAY_WIDTH = int(3440)
-DISPLAY_HEIGHT = int(1440)
+DISPLAY_WIDTH = int(1920)
+DISPLAY_HEIGHT = int(1080)
 
 # CROPPING CONFIG
-XY_CROP_SNAP_INCREMENT = float(100.0)
+XY_CROP_SNAP_INCREMENT = float(150.0)
 Z_CROP_SNAP_INCREMENT = float(100.0)
 
 # CUBIFICATION CONFIG
-CUBE_DIM_X = int(100)
-CUBE_DIM_Y = int(100)
-CUBE_DIM_Z = int(100)
+CUBE_DIM_X = int(150)
+CUBE_DIM_Y = int(150)
+CUBE_DIM_Z = int(500)
 
 
 # Data I/O config
-SCANS_DIR = "..\\scans\\"
+SCANS_DIR = "C:\\Users\\Lightsheet\\Desktop\\stitching\\"
