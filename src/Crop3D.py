@@ -99,8 +99,8 @@ def select_cropping_colors():
 
 def paint_cropping_text_xy(zProj, colors):
 
-    cv2.putText(zProj, "xSize=" + str(refPt[1][0] - refPt[0][0]), (refPt[1][0] + 10, refPt[1][1]), cv2.FONT_HERSHEY_SIMPLEX, 4.0, colors[0], 8)
-    cv2.putText(zProj, "ySize=" + str(refPt[1][1] - refPt[0][1]), (refPt[1][0] + 10, refPt[1][1] - 120), cv2.FONT_HERSHEY_SIMPLEX, 4.0, colors[0], 8)
+    cv2.putText(zProj, "xSize=" + str(refPt[1][0] - refPt[0][0]), (40, 110), cv2.FONT_HERSHEY_SIMPLEX, 4.0, colors[0], 8)
+    cv2.putText(zProj, "ySize=" + str(refPt[1][1] - refPt[0][1]), (40, 110+120), cv2.FONT_HERSHEY_SIMPLEX, 4.0, colors[0], 8)
 
 
 def paint_cropping_lines_xy(zProj, colors):
@@ -110,7 +110,7 @@ def paint_cropping_lines_xy(zProj, colors):
 
 def paint_cropping_text_z(xProj, colors):
 
-    cv2.putText(xProj, "zSize=" + str(z1 - z0), ((int(xProj.shape[1] / 2)) + 10, z0 + int((z1 - z0) / 2) + int(config.Z_CROP_SNAP_INCREMENT / 8)), cv2.FONT_HERSHEY_SIMPLEX, 2.0, colors[2], 4)
+    cv2.putText(xProj, "zSize=" + str(z1 - z0), (40, 50), cv2.FONT_HERSHEY_SIMPLEX, 2.0, colors[2], 4)
 
 
 def paint_cropping_line_lmb_z(xProj, colors):
@@ -143,9 +143,12 @@ def crop3D(STACK_FULL_PATH, destDir):
 
     global stackDims, xProjDims
 
+    print("\nLoading " + str(STACK_FULL_PATH))
     stack = tifffile.imread(STACK_FULL_PATH)
+    print("Cropping " + str(STACK_FULL_PATH))
     zProj = zsu.save_and_reload_maxproj(stack)
     xProj = zsu.save_and_reload_maxproj_x(stack)
+    yProj = zsu.save_and_reload_maxproj_y(stack)
     zProjClone = zProj.copy()
     xProjClone = xProj.copy()
 
@@ -157,6 +160,7 @@ def crop3D(STACK_FULL_PATH, destDir):
     # Cropping config
     CROP_WINDOW_NAME_XY = "3D Crop Utility XY"
     CROP_WINDOW_NAME_Z = "3D Crop Utility Z"
+    CROP_WINDOW_NAME_YPROJ = "Y Projection"
     DISPLAY_WIDTH = config.DISPLAY_WIDTH
     DISPLAY_HEIGHT = config.DISPLAY_HEIGHT
     CROP_WINDOW_WIDTH_XY = int(DISPLAY_HEIGHT - 100 * stackAspectRatio)
@@ -165,13 +169,10 @@ def crop3D(STACK_FULL_PATH, destDir):
     CROP_WINDOW_HEIGHT_Z = int(DISPLAY_WIDTH - 100 / xProjAspectRatio)
 
 
+
     cv2.namedWindow(CROP_WINDOW_NAME_XY, cv2.WINDOW_NORMAL)
     cv2.namedWindow(CROP_WINDOW_NAME_Z, cv2.WINDOW_NORMAL)
-    cv2.resizeWindow(CROP_WINDOW_NAME_XY, CROP_WINDOW_WIDTH_XY, CROP_WINDOW_HEIGHT_XY)
-    cv2.resizeWindow(CROP_WINDOW_NAME_Z, CROP_WINDOW_WIDTH_Z, CROP_WINDOW_HEIGHT_Z)
-
-    cv2.moveWindow(CROP_WINDOW_NAME_XY, 0, 0)
-    cv2.moveWindow(CROP_WINDOW_NAME_Z, CROP_WINDOW_WIDTH_XY, 0)
+    cv2.namedWindow(CROP_WINDOW_NAME_YPROJ, cv2.WINDOW_NORMAL)
 
     cv2.setMouseCallback(CROP_WINDOW_NAME_XY, click_and_crop)
     cv2.setMouseCallback(CROP_WINDOW_NAME_Z, click_and_z_crop)
@@ -185,6 +186,7 @@ def crop3D(STACK_FULL_PATH, destDir):
         # Display the frames with cropping overlays
         cv2.imshow(CROP_WINDOW_NAME_XY, zProj)
         cv2.imshow(CROP_WINDOW_NAME_Z, xProj)
+        cv2.imshow(CROP_WINDOW_NAME_YPROJ, yProj)
         key = cv2.waitKey(1) & 0xFF
 
         # Wipe the overlay so next overlay draw has fresh frame
@@ -208,5 +210,5 @@ def crop3D(STACK_FULL_PATH, destDir):
     croppedStack = stack[z0:z1, refPt[0][1]:refPt[1][1], refPt[0][0]:refPt[1][0]]
     croppedStackDims = zsu.gen_stack_dims_dict(croppedStack)
     tifffile.imwrite(destDir, croppedStack)
-    zsu.print_scan_dims(croppedStackDims)
+    zsu.print_crop_dims(croppedStackDims)
     return croppedStack

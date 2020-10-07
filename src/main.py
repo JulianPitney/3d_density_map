@@ -8,7 +8,7 @@ from pathlib import Path
 import cv2
 
 def crop_scans_dir():
-    print("cropping")
+
     STACK_PATHS = glob.glob(config.SCANS_DIR + "*.tif")
     CROPPED_DIR = Path(config.SCANS_DIR + 'cropped\\')
     CROPPED_DIR.mkdir(parents=False, exist_ok=False)
@@ -18,6 +18,8 @@ def crop_scans_dir():
         stem = temp.stem
         croppedPath = str(CROPPED_DIR) + "\\" +stem + "_cropped.tif"
         Crop3D.crop3D(stackPath, croppedPath)
+
+    print("All scans cropped! Have a wonderful day.")
 
 def crop_and_cubify_scans_dir():
 

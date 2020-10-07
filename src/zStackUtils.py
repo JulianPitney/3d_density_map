@@ -30,6 +30,12 @@ def max_project_x(stack):
     stackMax = np.max(stack, axis=2)
     return stackMax
 
+def max_project_y(stack):
+
+    stackMax = np.max(stack, axis=1)
+    return stackMax
+
+
 def save_and_reload_maxproj(stack):
 
     max = max_project(stack)
@@ -113,14 +119,22 @@ def save_and_reload_maxproj_x(stack):
     remove('temp.jpg')
     return max
 
+def save_and_reload_maxproj_y(stack):
+
+    max = max_project_y(stack)
+    cv2.imwrite("temp.jpg", max)
+    max = cv2.imread("temp.jpg")
+    remove('temp.jpg')
+    return max
+
 
 def gen_stack_dims_dict(stack):
 
     return dict({'z': stack.shape[0], 'y': stack.shape[1], 'x': stack.shape[2]})
 
-def print_scan_dims(stackDimsDict):
+def print_crop_dims(stackDimsDict):
 
-    print("Scan Dimensions")
+    print("Cropped Dimensions:")
     print("zDim=" + str(stackDimsDict['z']))
     print("yDim=" + str(stackDimsDict['y']))
     print("xDim=" + str(stackDimsDict['x']))
